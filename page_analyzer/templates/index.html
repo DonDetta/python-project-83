@@ -7,12 +7,13 @@
     <div class="container">
         <h1 class="display-4 mb-3">Анализатор страниц</h1>
         <p class="lead mb-4">Проверьте сайт на SEO-пригодность</p>
-        <form action="/urls" method="post">
+        <form action="{{ url_for('urls_post') }}" method="post">
             <div class="row g-2">
                 <div class="col-md-8">
                     <input
                         type="url"
                         name="url"
+                        value="{{ url or '' }}"
                         class="form-control form-control-lg"
                         placeholder="https://www.example.com"
                     >
