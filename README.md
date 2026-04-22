@@ -1,6 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/DonDetta/python-project-83/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DonDetta/python-project-83/actions)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DonDetta_python-project-83&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DonDetta_python-project-83)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DonDetta_python-project-83&metric=alert_status&branch=main)](https://sonarcloud.io/summary/new_code?id=DonDetta_python-project-83)
 
 ### Demo:
 https://python-project-83-render.onrender.com
