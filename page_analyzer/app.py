@@ -77,9 +77,16 @@ def urls_index():
     conn = get_conn()
     try:
         with conn.cursor() as cur:
-            cur.execute(
-                'SELECT id, name, created_at FROM urls ORDER BY id DESC'
-            )
+            cur.execute('''
+                SELECT u.id, u.name, uc.created_at, uc.status_code
+                FROM urls u
+                LEFT JOIN url_checks uc ON uc.id = (
+                    SELECT id FROM url_checks
+                    WHERE url_id = u.id
+                    ORDER BY id DESC LIMIT 1
+                )
+                ORDER BY u.id DESC
+            ''')
             urls = cur.fetchall()
     finally:
         conn.close()
@@ -95,8 +102,31 @@ def urls_show(id):
                 'SELECT id, name, created_at FROM urls WHERE id = %s', (id,)
             )
             url = cur.fetchone()
+            cur.execute('''
+                SELECT id, status_code, h1, title, description, created_at
+                FROM url_checks WHERE url_id = %s ORDER BY id DESC
+            ''', (id,))
+            checks = cur.fetchall()
     finally:
         conn.close()
     if not url:
         return render_template('404.html'), 404
-    return render_template('urls/show.html', url=url)
+    return render_template('urls/show.html', url=url, checks=checks)
+
+
+@app.post('/urls/<int:id>/checks')
+def url_checks_post(id):
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                'INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)',
+                (id, date.today())
+            )
+            conn.commit()
+        flash('Страница успешно проверена', 'success')
+    except Exception:
+        flash('Произошла ошибка при проверке', 'danger')
+    finally:
+        conn.close()
+    return redirect(url_for('urls_show', id=id))
