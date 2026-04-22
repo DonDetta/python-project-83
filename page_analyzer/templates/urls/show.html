@@ -44,9 +44,9 @@
             <tr>
                 <td>{{ check[0] }}</td>
                 <td>{{ check[1] or '' }}</td>
-                <td>{{ check[2] or '' }}</td>
-                <td>{{ check[3] or '' }}</td>
-                <td>{{ check[4] or '' }}</td>
+                <td>{{ (check[2] or '')[:200] }}{{ '...' if check[2] and check[2]|length > 200 else '' }}</td>
+                <td>{{ (check[3] or '')[:200] }}{{ '...' if check[3] and check[3]|length > 200 else '' }}</td>
+                <td>{{ (check[4] or '')[:200] }}{{ '...' if check[4] and check[4]|length > 200 else '' }}</td>
                 <td>{{ check[5] }}</td>
             </tr>
             {% endfor %}

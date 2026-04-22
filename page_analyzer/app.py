@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import psycopg2
 import requests
 import validators
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import (Flask, flash, redirect,
                    render_template, request, url_for)
@@ -129,11 +130,24 @@ def url_checks_post(id):
         response = requests.get(row[0], timeout=10)
         response.raise_for_status()
 
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        h1_tag = soup.find('h1')
+        h1 = h1_tag.get_text(strip=True) if h1_tag else ''
+
+        title_tag = soup.find('title')
+        title = title_tag.get_text(strip=True) if title_tag else ''
+
+        desc_tag = soup.find('meta', attrs={'name': 'description'})
+        description = desc_tag.get('content', '') if desc_tag else ''
+
         with conn.cursor() as cur:
             cur.execute(
-                'INSERT INTO url_checks (url_id, status_code, created_at) '
-                'VALUES (%s, %s, %s)',
-                (id, response.status_code, date.today())
+                'INSERT INTO url_checks '
+                '(url_id, status_code, h1, title, description, created_at) '
+                'VALUES (%s, %s, %s, %s, %s, %s)',
+                (id, response.status_code, h1, title,
+                 description, date.today())
             )
             conn.commit()
         flash('Страница успешно проверена', 'success')
